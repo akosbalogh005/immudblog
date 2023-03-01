@@ -1,0 +1,34 @@
+# docker-compose.yml
+
+version: '3'
+services:
+  immudb:
+    image: codenotary/immudb:latest
+    ports:
+      - '3322:3322'
+      - '5432:5432'
+      - '8088:8080'
+      - '9497:9497'
+    container_name: immudb
+    environment:
+      - IMMUDB_ADDRESS=0.0.0.0
+      - IMMUDB_AUTH=true    
+    networks:
+      - immudbnet      
+  server:
+    image: immudblog
+    build:
+      context: ./
+      dockerfile: ./Dockerfile  
+    depends_on:
+      - immudb      
+    environment:
+      - DB_HOST=immudb
+    ports:
+      - '8080:8080'
+    networks:
+      - immudbnet          
+
+networks:
+  immudbnet:
+    name: immudbnet

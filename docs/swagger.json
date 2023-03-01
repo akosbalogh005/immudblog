@@ -1,0 +1,241 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A sample application for store loglines to immudb",
+        "title": "Immudb Logstore",
+        "contact": {
+            "name": "Akos Balogh",
+            "email": "akosbalogh005@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/logs": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get stored logs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "summary": "Get stored logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Max number of returned logs. Ordered by id desc.",
+                        "name": "count",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter for application",
+                        "name": "application",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Log"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.APIResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.APIResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Add log(s) to the immudb",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "summary": "Add log(s) to the immudb",
+                "parameters": [
+                    {
+                        "description": "Logs to be storeds",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Log"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.APIResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logs/count": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get number of stored logs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "summary": "Get number of stored logs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.GetLogsCountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.APIResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.APIResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.APIResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "code",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "message",
+                    "type": "string"
+                }
+            }
+        },
+        "model.GetLogsCountResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Log": {
+            "type": "object",
+            "properties": {
+                "application": {
+                    "description": "name of application",
+                    "type": "string",
+                    "example": "app1"
+                },
+                "hostname": {
+                    "description": "Hostame",
+                    "type": "string",
+                    "example": "hostname"
+                },
+                "id": {
+                    "description": "unique id (in DB)",
+                    "type": "integer"
+                },
+                "meaasge": {
+                    "description": "log message",
+                    "type": "string"
+                },
+                "messageid": {
+                    "description": "Message ID",
+                    "type": "integer"
+                },
+                "pid": {
+                    "description": "process id",
+                    "type": "string"
+                },
+                "pri": {
+                    "description": "priority (facility*8 + severity)",
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "description": "timestamp of logline (RFC3339)",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "version": {
+                    "description": "logline version",
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}
